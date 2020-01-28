@@ -436,6 +436,7 @@ module TextRange = {
 type t = {
   kind: syntaxKind,
   flags: nodeFlags,
+  name: option(t),
   parent: t,
   pos: int,
   [@bs.as "end"]
