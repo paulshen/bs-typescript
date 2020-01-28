@@ -1,5 +1,6 @@
 open Compiler;
-let program = createProgram([|"./sample.ts"|], Js.Dict.empty());
+let program =
+  createProgram([|"./sample.tsx"|], Js.Dict.fromList([("jsx", "react")]));
 
 let checker = program->Program.getTypeChecker;
 
@@ -13,12 +14,16 @@ sourceFiles
          | Some(name) =>
            switch (checker->TypeChecker.getSymbolAtLocation(name)) {
            | Some(symbol) =>
-             let type_ =
-               checker->TypeChecker.getTypeOfSymbolAtLocation(
-                 symbol,
-                 Belt.Option.getExn(symbol.valueDeclaration),
-               );
-             Js.log(checker->TypeChecker.typeToString(type_));
+             switch (symbol.valueDeclaration) {
+             | Some(valueDeclaration) =>
+               let type_ =
+                 checker->TypeChecker.getTypeOfSymbolAtLocation(
+                   symbol,
+                   valueDeclaration,
+                 );
+               Js.log(checker->TypeChecker.typeToString(type_));
+             | None => ()
+             }
            | None => ()
            }
          | None => ()
